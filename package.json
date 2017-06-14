@@ -1,0 +1,88 @@
+{
+	"name": "vscode-svn",
+	"displayName": "vscode-svn",
+	"description": "",
+	"version": "0.0.1",
+	"publisher": "sk",
+	"engines": {
+		"vscode": "^1.13.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"main": "./out/src/extension",
+	"contributes": {
+		"commands": [
+			{
+				"command": "vscode-svn.status",
+				"title": "Svn Status"
+			}, {
+				"command": "vscode-svn.diff",
+				"title": "Svn Diff"
+			}, {
+				"command": "vscode-svn.update",
+				"title": "Svn Update"
+			}, {
+				"command": "vscode-svn.commit",
+				"title": "Svn Commit"
+			}
+		],
+		"menus": {
+			"scm/title": [
+				{
+					"command": "vscode-svn.status",
+					"group": "navigation"
+				}, {
+					"command": "vscode-svn.status",
+					"group": "vscode-svn-group1"
+				}, {
+					"command": "vscode-svn.diff",
+					"group": "vscode-svn-group1"
+				}, {
+					"command": "vscode-svn.update",
+					"group": "vscode-svn-group2"
+				}, {
+					"command": "vscode-svn.commit",
+					"group": "vscode-svn-group2"
+				}
+			],
+			"scm/resourceGroup/context": [
+				{
+					"command": "vscode-svn.update",
+					"group": "inline"
+				}, {
+					"command": "vscode-svn.commit",
+					"group": "vscode-svn-group1"
+				}
+			],
+			"scm/resourceState/context": [
+				{
+					"command": "vscode-svn.diff",
+					"group": "inline"
+				}, {
+					"command": "vscode-svn.update",
+					"group": "vscode-svn-group1"
+				}, {
+					"command": "vscode-svn.commit",
+					"group": "vscode-svn-group1"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "tsc -p ./",
+		"compile": "tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"typescript": "^2.0.3",
+		"vscode": "^1.0.0",
+		"mocha": "^2.3.3",
+		"@types/node": "^6.0.40",
+		"@types/mocha": "^2.2.32"
+	}
+}

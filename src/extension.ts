@@ -1,6 +1,7 @@
 'use strict';
 
 import * as vscode from 'vscode';
+
 import { SvnSourceControl } from './svn-source-control';
 
 // this method is called when your extension is activated

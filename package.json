@@ -18,16 +18,20 @@
 		"commands": [
 			{
 				"command": "vscode-svn.status",
-				"title": "Svn Status"
+				"title": "Svn Status",
+				"category": "Svn"
 			}, {
 				"command": "vscode-svn.diff",
-				"title": "Svn Diff"
+				"title": "Svn Diff",
+				"category": "Svn"
 			}, {
 				"command": "vscode-svn.update",
-				"title": "Svn Update"
+				"title": "Svn Update",
+				"category": "Svn"
 			}, {
 				"command": "vscode-svn.commit",
-				"title": "Svn Commit"
+				"title": "Svn Commit",
+				"category": "Svn"
 			}
 		],
 		"menus": {

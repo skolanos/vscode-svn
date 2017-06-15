@@ -1,4 +1,4 @@
-import { Disposable, scm, SourceControl, SourceControlResourceGroup, Uri, window, workspace, OutputChannel } from 'vscode';
+import { Disposable, scm, SourceControl, SourceControlResourceGroup, Uri, window, workspace, OutputChannel, FileSystemWatcher, commands } from 'vscode';
 
 import { SvnCommands } from './svn-commands';
 
@@ -8,31 +8,37 @@ export class SvnSourceControl {
 	private changesTree: SourceControlResourceGroup;
 	private outputChannel: OutputChannel;
 	private workspaceRootPath: string;
+	private fileSystemWatcher: FileSystemWatcher;
 	private svnCommands: SvnCommands;
 
 	constructor() {
 		this.disposables = [];
+
+		// pobranie ścieżki dla workspace
 		this.workspaceRootPath = workspace.rootPath;
 
 		this.sourceControl = scm.createSourceControl('svn', 'Svn');
 		this.disposables.push(this.sourceControl);
 
-		this.changesTree = this.sourceControl.createResourceGroup('changesTree', 'CHANGES');
-		this.disposables.push(this.changesTree);
-
-		this.outputChannel = window.createOutputChannel(this.sourceControl.label);
-		this.disposables.push(this.outputChannel);
-
 		this.svnCommands = new SvnCommands(this);
 		this.disposables.push(this.svnCommands);
 
-		/* DEBUG: testowa sekcja*/
-		this.changesTree.resourceStates = [
-			{ resourceUri: new Uri().with({ path: './test.txt' }) },
-			{ resourceUri: new Uri().with({ path: './src/app/main.js' }) }
-		];
+		// utworzenie grupy na panelu SOURCE CONTROL
+		this.changesTree = this.sourceControl.createResourceGroup('changesTree', 'CHANGES');
+		this.disposables.push(this.changesTree);
 
+		// utworzenie strumienia z info. na zakładce OUTPUT
+		this.outputChannel = window.createOutputChannel(this.sourceControl.label);
+		this.disposables.push(this.outputChannel);
 		this.outputChannel.show();
+
+		// reagowanie na zmiany w strukturze plików w projekcie
+		this.fileSystemWatcher = workspace.createFileSystemWatcher(`${this.workspaceRootPath}/**/*`);
+		this.disposables.push(this.fileSystemWatcher);
+		this.fileSystemWatcher.onDidChange(fileSystemWatcherEvent);
+		this.fileSystemWatcher.onDidCreate(fileSystemWatcherEvent);
+		this.fileSystemWatcher.onDidDelete(fileSystemWatcherEvent);
+		fileSystemWatcherEvent();
 	}
 	getWorkspaceRootPath(): string {
 		return this.workspaceRootPath;
@@ -48,4 +54,9 @@ export class SvnSourceControl {
 			disposable.dispose();
 		})
 	}
+}
+
+function fileSystemWatcherEvent(): void {
+	// console.log('wywołanie fileSystemWatcherEvent()');
+	commands.executeCommand('vscode-svn.status');
 }

@@ -23,6 +23,9 @@ export class SvnCommands {
 					window.showErrorMessage(`Wystąpił bład w poleceniu vscode-svn.status: ${stderr}`);
 					return;
 				}
+				/* DEBUG:
+				stdout = '12345678./test-status.txt\n12345678./src/app/main-status.js\n12345678./src/stat-status.md';
+				*/
 				let elements: string[] = stdout.split('\n');
 				this.svnSourceControl.getChangesTree().resourceStates = elements.map((element: string) => {
 					let attr = element.substr(0, 8);

@@ -19,45 +19,79 @@
 			{
 				"command": "vscode-svn.status",
 				"title": "Svn Status",
-				"category": "Svn"
-			}, {
-				"command": "vscode-svn.diff",
-				"title": "Svn Diff",
-				"category": "Svn"
-			}, {
+				"category": "Svn",
+				"icon": {
+					"light": "resources/icons/light/refresh.png",
+					"dark": "resources/icons/dark/refresh.png"
+				} 
+			},
+			{
+				"command": "vscode-svn.update-all",
+				"title": "Svn Update All",
+				"category": "Svn",
+				"icon": {
+					"light": "resources/icons/light/update-all.png",
+					"dark": "resources/icons/dark/update-all.png"
+				} 
+			},
+			{
 				"command": "vscode-svn.update",
 				"title": "Svn Update",
 				"category": "Svn"
-			}, {
+			},
+			{
+				"command": "vscode-svn.diff",
+				"title": "Svn Diff",
+				"category": "Svn"
+			},
+			{
 				"command": "vscode-svn.commit",
 				"title": "Svn Commit",
 				"category": "Svn"
 			}
 		],
 		"menus": {
+			"commandPalette": [
+				{
+					"command": "vscode-svn.status"
+				}
+			],
 			"scm/title": [
 				{
 					"command": "vscode-svn.status",
 					"group": "navigation"
-				}, {
+				},
+				{
+					"command": "vscode-svn.update-all",
+					"group": "navigation"
+				},
+				{
 					"command": "vscode-svn.status",
-					"group": "vscode-svn-group1"
-				}, {
+					"group": "1_vscode-svn-group"
+				},
+				{
 					"command": "vscode-svn.diff",
-					"group": "vscode-svn-group1"
-				}, {
+					"group": "1_vscode-svn-group"
+				},
+				{
+					"command": "vscode-svn.update-all",
+					"group": "2_vscode-svn-group"
+				},
+				{
 					"command": "vscode-svn.update",
-					"group": "vscode-svn-group2"
-				}, {
+					"group": "2_vscode-svn-group"
+				},
+				{
 					"command": "vscode-svn.commit",
-					"group": "vscode-svn-group2"
+					"group": "2_vscode-svn-group"
 				}
 			],
 			"scm/resourceGroup/context": [
 				{
 					"command": "vscode-svn.update",
 					"group": "inline"
-				}, {
+				},
+				{
 					"command": "vscode-svn.commit",
 					"group": "vscode-svn-group1"
 				}
@@ -66,10 +100,12 @@
 				{
 					"command": "vscode-svn.diff",
 					"group": "inline"
-				}, {
+				},
+				{
 					"command": "vscode-svn.update",
 					"group": "vscode-svn-group1"
-				}, {
+				},
+				{
 					"command": "vscode-svn.commit",
 					"group": "vscode-svn-group1"
 				}

@@ -19,6 +19,7 @@ export class SvnSourceControl {
 
 		this.sourceControl = scm.createSourceControl('svn', 'Svn');
 		this.disposables.push(this.sourceControl);
+		this.sourceControl.quickDiffProvider = this;
 
 		this.svnCommands = new SvnCommands(this);
 		this.disposables.push(this.svnCommands);

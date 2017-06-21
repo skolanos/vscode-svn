@@ -35,6 +35,15 @@
 				} 
 			},
 			{
+				"command": "vscode-svn.commit-all",
+				"title": "Svn Commit All",
+				"category": "Svn",
+				"icon": {
+					"light": "resources/icons/light/commit-all.png",
+					"dark": "resources/icons/dark/commit-all.png"
+				} 
+			},
+			{
 				"command": "vscode-svn.update",
 				"title": "Svn Update",
 				"category": "Svn"
@@ -66,6 +75,10 @@
 					"group": "navigation"
 				},
 				{
+					"command": "vscode-svn.commit-all",
+					"group": "navigation"
+				},
+				{
 					"command": "vscode-svn.status",
 					"group": "1_vscode-svn-group"
 				},
@@ -82,23 +95,27 @@
 					"group": "2_vscode-svn-group"
 				},
 				{
+					"command": "vscode-svn.commit-all",
+					"group": "2_vscode-svn-group"
+				},
+				{
 					"command": "vscode-svn.commit",
 					"group": "2_vscode-svn-group"
 				}
 			],
 			"scm/resourceGroup/context": [
 				{
-					"command": "vscode-svn.update",
+					"command": "vscode-svn.diff",
 					"group": "inline"
 				},
 				{
-					"command": "vscode-svn.commit",
+					"command": "vscode-svn.status",
 					"group": "vscode-svn-group1"
 				}
 			],
 			"scm/resourceState/context": [
 				{
-					"command": "vscode-svn.diff",
+					"command": "vscode-svn.update",
 					"group": "inline"
 				},
 				{

@@ -1,4 +1,4 @@
-import { Disposable, commands, window, Uri } from 'vscode';
+import { Disposable, commands, window, Uri, SourceControlResourceState } from 'vscode';
 import * as child_process from 'child_process';
 import * as path from 'path';
 
@@ -17,41 +17,92 @@ export class SvnCommands {
 
 			child_process.exec(`svn status ${workspaceRootPath}`, (error: Error, stdout: string, stderr: string) => {
 				if (error) {
-					window.showErrorMessage(`Wystąpił bład w poleceniu vscode-svn.status: ${error.message}`);
+					window.showErrorMessage(`Error message: ${error.message}`);
 					return;
 				}
 				if (stderr !== '') {
-					window.showErrorMessage(`Wystąpił bład w poleceniu vscode-svn.status: ${stderr}`);
+					window.showErrorMessage(`Error message: ${stderr}`);
 					return;
 				}
 				// DEBUG: stdout = 'M2345678./test-status.txt\n?2345678./src/app/main-status.js\n?2345678./src/stat-status.md';
 				let elements: string[] = stdout.split('\n');
-				this.svnSourceControl.getChangesTree().resourceStates = elements.map((element: string) => {
+				this.svnSourceControl.getChangesTree().resourceStates = elements.filter((element: string) => {
+					return element !== '';
+				}).map((element: string) => {
 					let attr = element.substr(0, 8);
 					let fileName = element.substr(8).trim();
-					return { resourceUri: new Uri().with({ path: fileName }), decorations: {iconPath: Uri.file(this.getPathForFileStateIcon(attr))} };
+					let resourceState: SourceControlResourceState = {
+						command: {
+							command: 'vscode-svn.open-diff-view',
+							title: 'Open Diff View'
+						},
+						resourceUri: new Uri().with({ scheme: 'file', path: fileName }),
+						decorations: { iconPath: Uri.file(this.getPathForFileStateIcon(attr)) }
+					};
+					resourceState.command.arguments = [resourceState];
+					return resourceState;
 				});
 			});
 		}));
+		this.disposables.push(commands.registerCommand('vscode-svn.open-diff-view', (resourceState: SourceControlResourceState) => {
+			window.showInformationMessage('To jest polecenie vscode-svn.open-diff-view'); // TODO:
+
+			// TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			commands.executeCommand<void>('vscode.open', resourceState.resourceUri);
+			//commands.executeCommand<void>('vscode.diff', resourceState.resourceUri, new Uri().with({ scheme: 'svn', query: 'HEAD', path: resourceState.resourceUri.path}), path.basename(resourceState.resourceUri.path));
+		}));
 		this.disposables.push(commands.registerCommand('vscode-svn.diff', () => {
-			window.showInformationMessage('To jest polecenie vscode-svn.diff');
-			/*
-			this.svnSourceControl.getChangesTree().resourceStates = [
-				{ resourceUri: new Uri().with({ path: './test-status.txt' }), decorations: {iconPath: Uri.file(this.getPathForFileStateIcon('C2345678')) } },
-				{ resourceUri: new Uri().with({ path: './src/app/main-status.js' }) },
-				{ resourceUri: new Uri().with({ path: './src/stat-status.md' }) },
-				{ resourceUri: new Uri().with({ path: './src/lib' }) }
-			];
-			*/
+			window.showInformationMessage('To jest polecenie vscode-svn.diff'); // TODO:
 		}));
 		this.disposables.push(commands.registerCommand('vscode-svn.update-all', () => {
-			window.showInformationMessage('To jest polecenie vscode-svn.update-all');
+			let workspaceRootPath: string = this.svnSourceControl.getWorkspaceRootPath();
+
+			this.svnSourceControl.getOutputChannel().appendLine(`vscode-svn.update-all\tsvn update ${workspaceRootPath}`);
+
+			child_process.exec(`svn update ${workspaceRootPath}`, (error: Error, stdout: string, stderr: string) => {
+				if (error) {
+					window.showErrorMessage(`Error message: ${error.message}`);
+					return;
+				}
+				if (stderr !== '') {
+					window.showErrorMessage(`Error message: ${stderr}`);
+					return;
+				}
+				commands.executeCommand('vscode-svn.status');
+			});
 		}));
-		this.disposables.push(commands.registerCommand('vscode-svn.update', () => {
-			window.showInformationMessage('To jest polecenie vscode-svn.update');
+		this.disposables.push(commands.registerCommand('vscode-svn.update', (...resourceStates: SourceControlResourceState[]) => {
+			if (resourceStates.length === 0) {
+				window.showErrorMessage('No files selected for update.');
+			}
+			else {
+				let filesPath = '';
+				resourceStates.forEach((resource: SourceControlResourceState) => {
+					filesPath += resource.resourceUri.fsPath + ' ';
+				});
+				filesPath = filesPath.trim();
+				if (filesPath !== '') {
+					this.svnSourceControl.getOutputChannel().appendLine(`vscode-svn.update\tsvn update ${filesPath}`);
+
+					child_process.exec(`svn update ${filesPath}`, (error: Error, stdout: string, stderr: string) => {
+						if (error) {
+							window.showErrorMessage(`Error message: ${error.message}`);
+							return;
+						}
+						if (stderr !== '') {
+							window.showErrorMessage(`Error message: ${stderr}`);
+							return;
+						}
+						commands.executeCommand('vscode-svn.status');
+					});
+				}
+			}
+		}));
+		this.disposables.push(commands.registerCommand('vscode-svn.commit-all', () => {
+			window.showInformationMessage('To jest polecenie vscode-svn.commit-all'); // TODO:
 		}));
 		this.disposables.push(commands.registerCommand('vscode-svn.commit', () => {
-			window.showInformationMessage('To jest polecenie vscode-svn.commit');
+			window.showInformationMessage('To jest polecenie vscode-svn.commit'); // TODO:
 		}));
 	}
 	getPathForFileStateIcon(fileState: string): string {

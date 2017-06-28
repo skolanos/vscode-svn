@@ -45,11 +45,42 @@ export class SvnCommands {
 			});
 		}));
 		this.disposables.push(commands.registerCommand('vscode-svn.open-diff-view', (resourceState: SourceControlResourceState) => {
-			window.showInformationMessage('To jest polecenie vscode-svn.open-diff-view'); // TODO:
+			child_process.exec(`svn info ${resourceState.resourceUri.fsPath}`, (error: Error, stdout: string, stderr: string) => {
+				if (error) {
+					window.showErrorMessage(`Error message: ${error.message}`);
+					return;
+				}
+				if (stderr !== '') {
+					window.showErrorMessage(`Error message: ${stderr}`);
+					return;
+				}
+				let fileName = path.parse(resourceState.resourceUri.fsPath).base;
+				let elements: string[] = stdout.split('\n');
+				let url = '';
+				elements.forEach((element: string) => {
+					let matchArray: RegExpMatchArray = element.match(/^URL:(\s)*(.+)$/);
+					if (matchArray && matchArray.length === 3) {
+						url = matchArray[2];
+					}
+				});
 
-			// TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			commands.executeCommand<void>('vscode.open', resourceState.resourceUri);
-			//commands.executeCommand<void>('vscode.diff', resourceState.resourceUri, new Uri().with({ scheme: 'svn', query: 'HEAD', path: resourceState.resourceUri.path}), path.basename(resourceState.resourceUri.path));
+				if (url === '') {
+					commands.executeCommand<void>('vscode.open', resourceState.resourceUri);
+				}
+				else {
+					child_process.exec(`svn export ${url} ${svnSourceControl.getTmpDir()}`, (error: Error, stdout: string, stderr: string) => {
+						if (error) {
+							window.showErrorMessage(`Error message: ${error.message}`);
+							return;
+						}
+						if (stderr !== '') {
+							window.showErrorMessage(`Error message: ${stderr}`);
+							return;
+						}
+						commands.executeCommand<void>('vscode.diff', Uri.parse('file://' + path.join(svnSourceControl.getTmpDir(), fileName)), resourceState.resourceUri, 'Repository <-> Local file');
+					});
+				}
+			});
 		}));
 		this.disposables.push(commands.registerCommand('vscode-svn.diff', () => {
 			window.showInformationMessage('To jest polecenie vscode-svn.diff'); // TODO:

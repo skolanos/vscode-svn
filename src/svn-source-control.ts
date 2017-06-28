@@ -8,11 +8,14 @@ export class SvnSourceControl {
 	private changesTree: SourceControlResourceGroup;
 	private outputChannel: OutputChannel;
 	private workspaceRootPath: string;
+	private tmpDir: string;
 	private fileSystemWatcher: FileSystemWatcher;
 	private svnCommands: SvnCommands;
 
 	constructor() {
 		this.disposables = [];
+
+		this.tmpDir = '';
 
 		// pobranie ścieżki dla workspace
 		this.workspaceRootPath = workspace.rootPath;
@@ -49,6 +52,12 @@ export class SvnSourceControl {
 	}
 	getChangesTree(): SourceControlResourceGroup {
 		return this.changesTree;
+	}
+	setTmpDir(tmpDir: string): void {
+		this.tmpDir = tmpDir;
+	}
+	getTmpDir(): string {
+		return this.tmpDir;
 	}
 	dispose(): void {
 		this.disposables.forEach((disposable: Disposable) => {
